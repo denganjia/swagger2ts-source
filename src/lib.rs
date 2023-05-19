@@ -1,4 +1,3 @@
-use serde::{Deserialize, Serialize};
 // use serde_json::{Map, Result as SerdeJsonResult};
 use regex::Regex;
 use serde_json;
@@ -7,38 +6,12 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct DTO {
-    title: Option<String>,
-    description: Option<String>,
-    required: Option<Vec<String>>,
-    r#type: Option<String>,
-    properties: Option<HashMap<String, Properties>>,
-}
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct Items {
-    #[serde(rename = "originalRef")]
-    original_ref: Option<String>,
-    r#type: Option<String>,
-}
+mod json_struct;
+mod openapi;
+mod swagger;
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct Properties {
-    r#type: Option<String>,
-    description: Option<String>,
-    items: Option<Items>,
-    r#enum: Option<Vec<String>>,
-}
+use crate::json_struct::{Properties, Swagger, DTO};
 
-#[derive(Deserialize, Serialize, Debug)]
-pub struct Swagger {
-    swagger: String,
-    definitions: HashMap<String, DTO>,
-}
-
-/// `save_file`
-/// 
-/// 
 pub fn save(str: String, filename: PathBuf) -> std::io::Result<()> {
     let parent_dir = filename.parent().unwrap();
     if !parent_dir.exists() {
