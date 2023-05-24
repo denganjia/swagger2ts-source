@@ -1,13 +1,12 @@
-// pub mod json_struct {
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct DTO {
     pub title: Option<String>,
     pub description: Option<String>,
     pub required: Option<Vec<String>>,
     pub r#type: Option<String>,
-    pub properties: Option<HashMap<String, Properties>>,
+    pub properties: Option<BTreeMap<String, Properties>>,
 }
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Items {
@@ -29,22 +28,22 @@ pub struct Properties {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Swagger {
     swagger: String,
-    pub definitions: HashMap<String, DTO>,
+    pub definitions: BTreeMap<String, DTO>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Components {
-    schemas: HashMap<String, DTO>,
+    schemas: BTreeMap<String, DTO>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
-pub struct Doc {
-    swagger: Option<String>,
-    definitions: HashMap<String, DTO>,
-    openapi: Option<String>,
-    components: Option<Components>,
-    path: Vec<String>,
+pub enum Doc {
+    OpenApi(Swagger),
+    Swagger(Swagger),
 }
+
 #[derive(Deserialize, Serialize, Debug)]
-pub struct ApiPath {}
-// }
+pub struct Paths {}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct ParameterObj {}

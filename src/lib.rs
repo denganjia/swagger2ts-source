@@ -1,17 +1,18 @@
 // use serde_json::{Map, Result as SerdeJsonResult};
 use regex::Regex;
 use serde_json;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
 
-mod json_struct;
 mod openapi;
-mod swagger;
-
-use crate::json_struct::{Properties, Swagger, DTO};
-
+mod schemas;
+pub mod swagger;
+mod utils;
+#[allow(unused_imports)]
+use crate::openapi::OPENAPI;
+use crate::schemas::{Properties, Swagger, DTO};
 pub fn save(str: String, filename: PathBuf) -> std::io::Result<()> {
     let parent_dir = filename.parent().unwrap();
     if !parent_dir.exists() {
@@ -23,9 +24,11 @@ pub fn save(str: String, filename: PathBuf) -> std::io::Result<()> {
 }
 
 /// 根据url获取api的json
-pub async fn get_json(url: &str) -> Result<Swagger, Box<dyn std::error::Error>> {
+pub async fn get_json(
+    url: &str,
+) -> Result<openapi_schema::v2::Swagger, Box<dyn std::error::Error>> {
     let resp = reqwest::get(url).await?.text().await?;
-    let resp: Swagger = serde_json::from_str(&resp)?;
+    let resp: openapi_schema::v2::Swagger = serde_json::from_str(&resp)?;
     Ok(resp)
 }
 
@@ -96,7 +99,7 @@ export interface {} {{
     );
 
     // let properties = model.properties.clone().unwrap_or(HashMap::new());
-    let properties = gen_default(&model.properties, HashMap::new());
+    let properties = gen_default(&model.properties, BTreeMap::new());
     let property_keys = properties.keys();
     if property_keys.len() > 0 {
         for property in property_keys {

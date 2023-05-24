@@ -11,10 +11,11 @@ serde_json = "1.0.96"
 tokio = {version="1.28.1",features =["full"]}
 openssl = {version = "0.10",features=["vendored"]}
 serde = {version="1.0.163",features=["derive"]}
-strum_macros = "0.24.3"
-strum = "0.24.1"
+# strum_macros = "0.24.3"
+# strum = "0.24.1"
 regex = "1.8.1"
 clap = { version = "4.2.7", features = ["derive"] }
+openapi-schema = "0.1.2"
 
 [build]
 target = "i686-pc-windows-gnu"
