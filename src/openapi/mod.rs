@@ -1,20 +1,21 @@
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-#[allow(dead_code)]
-#[derive(Deserialize, Serialize)]
-pub struct OPENAPI {
-    openapi: String,
-    paths: Vec<String>,
-    components: Components,
-    tags: String,
-}
+pub mod Interface {
+    use crate::utils::{gen_type, is_english};
+    use openapi_schema::v3::{OpenApi, RefOrObject, Reference, Schema};
 
-#[derive(Deserialize, Serialize)]
-pub struct Components {
-    schemas: HashMap<String, String>,
-}
-
-#[derive(Deserialize, Serialize)]
-pub struct Schemas {
-    schemas: HashMap<String, String>,
+    fn get_schemas(openapi: &OpenApi) -> Vec<Schema> {
+        let mut result: Vec<Schema> = vec![];
+        if let Some(components) = openapi.components {
+            if let Some(schemas) = &components.schemas {
+                for object in schemas.values() {
+                    match object {
+                        RefOrObject::Object(schema) => {
+                            &mut result.push(schema);
+                        }
+                        _ => (),
+                    }
+                }
+            }
+        };
+        return result;
+    }
 }

@@ -33,7 +33,7 @@ export interface {} {{
             for property in properties {
                 let (name, schema) = property;
                 let required = match &model.required {
-                    Some(requied) => requied.contains(&name),
+                    Some(required) => required.contains(&name),
                     _ => false,
                 };
                 // 如果有描述信息，就生成注释，添加到后面

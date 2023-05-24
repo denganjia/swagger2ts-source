@@ -561,9 +561,9 @@ checksum = "b7e5500299e16ebb147ae15a00a942af264cf3688f47923b8fc2cd5858f23ad3"
 
 [[package]]
 name = "openapi-schema"
-version = "0.1.2"
+version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64f90027916a8acd66a22dec88b449f3fd7c4d1dfaccfa22cd3a2938d633bbfd"
+checksum = "71042b391fa9aa9d4b0c5a313f22a94c32bc1955a2206b9d353c8b264a0c64e5"
 dependencies = [
  "serde",
  "serde_json",
