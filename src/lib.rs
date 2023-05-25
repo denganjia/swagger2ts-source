@@ -23,12 +23,12 @@ pub fn save(str: String, filename: PathBuf) -> std::io::Result<()> {
 }
 
 /// 根据url获取api的json
-pub async fn get_json(
-    url: &str,
-) -> Result<openapi_schema::v2::Swagger, Box<dyn std::error::Error>> {
+pub async fn get_json(url: &str) -> Result<openapi_schema::Doc, serde_json::Error> {
     let resp = reqwest::get(url).await?.text().await?;
-    let resp: openapi_schema::v2::Swagger = serde_json::from_str(&resp)?;
-    Ok(resp)
+    // let resp: openapi_schema::v2::Swagger = serde_json::from_str(&resp)?;
+    let resp = openapi_schema::from_str(&resp);
+    // Ok(resp)
+    resp
 }
 
 /// 生成注释

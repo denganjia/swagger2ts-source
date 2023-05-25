@@ -7,8 +7,8 @@ use std::{
     fs::File,
     io::{Error, Read},
 };
-use swagger2ts::swagger::Interface;
 use swagger2ts::{gen_interface, get_definitions, get_json, save};
+use swagger2ts::{openapi::Interface as OpenApiInterface, swagger::Interface as SwaggerInterface};
 /// Simple program to generate the typescript interface by swagger json
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -25,29 +25,25 @@ struct Args {
     #[arg(short, long, default_value_t = String::from("api"))]
     outdir: String,
 }
-#[tokio::main]
+
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
     let start = Instant::now();
-    // let resp = get_json(&args.url).await.unwrap();
-
-    let open_api = openapi_from_reader(File::open("./example/openapi.json")?).unwrap();
-
-    let interface_str = swagger2ts::openapi::Interface::generate(open_api);
-
-    // let interface_str = Interface::generate(&resp);
-    // let definitions = get_definitions(&resp);
-    // let mut interface = String::new();
-    // for define in definitions {
-    //     // save_file(gen_interface(&define)).unwrap();
-    //     interface.push_str(&gen_interface(&define))
-    // }
+    let resp = get_json(&args.url).await.unwrap();
+    let interface_str = String::new();
+    match resp {
+        openapi_schema::Doc::V2(v2) => {
+            interface_str.push_str(&SwaggerInterface::generate(&v2));
+        }
+        openapi_schema::Doc::V3(v3) => {
+            interface_str.push_str(&OpenApiInterface::generate(v3));
+        }
+    }
     let mut filepath = PathBuf::new();
     filepath.push(env::current_dir()?);
     filepath.push(args.outdir);
     filepath.push(args.filename);
     save(interface_str, filepath)?;
-    // let json: Swagger = serde_json::from_str(&resp)?;
     let duration = start.elapsed();
     println!("\n代码执行时间：{:?}\n", duration);
     Ok(())
