@@ -1,4 +1,5 @@
 /target
-/api/*
+/api
 
 .vscode
+/test

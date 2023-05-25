@@ -1,13 +1,8 @@
 use clap::Parser;
-use openapi_schema::openapi_from_reader;
 use std::env;
 use std::path::PathBuf;
 use std::time::Instant;
-use std::{
-    fs::File,
-    io::{Error, Read},
-};
-use swagger2ts::{gen_interface, get_definitions, get_json, save};
+use swagger2ts::{get_json, save};
 use swagger2ts::{openapi::Interface as OpenApiInterface, swagger::Interface as SwaggerInterface};
 /// Simple program to generate the typescript interface by swagger json
 #[derive(Parser, Debug)]
@@ -25,12 +20,12 @@ struct Args {
     #[arg(short, long, default_value_t = String::from("api"))]
     outdir: String,
 }
-
+#[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
     let start = Instant::now();
     let resp = get_json(&args.url).await.unwrap();
-    let interface_str = String::new();
+    let mut interface_str = String::new();
     match resp {
         openapi_schema::Doc::V2(v2) => {
             interface_str.push_str(&SwaggerInterface::generate(&v2));
