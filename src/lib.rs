@@ -6,12 +6,11 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
 
-mod openapi;
+pub mod openapi;
 mod schemas;
 pub mod swagger;
 mod utils;
 #[allow(unused_imports)]
-use crate::openapi::OPENAPI;
 use crate::schemas::{Properties, Swagger, DTO};
 pub fn save(str: String, filename: PathBuf) -> std::io::Result<()> {
     let parent_dir = filename.parent().unwrap();

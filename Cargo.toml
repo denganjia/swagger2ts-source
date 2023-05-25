@@ -15,7 +15,7 @@ serde = {version="1.0.163",features=["derive"]}
 # strum = "0.24.1"
 regex = "1.8.1"
 clap = { version = "4.2.7", features = ["derive"] }
-openapi-schema = "0.1.4"
+openapi-schema = "0.1.5"
 
 [build]
 target = "i686-pc-windows-gnu"

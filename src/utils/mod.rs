@@ -55,3 +55,13 @@ pub fn gen_type(property: &str, r#type: &str, required: bool, array: bool) -> St
     };
     format!("{property}{required}: {_type}{array};")
 }
+
+/// 获取$ref路径中最后一项
+pub fn get_ref_last_item(str: &str) -> Option<String> {
+    let re = Regex::new(r".*/(.*)").unwrap();
+    if let Some(cap) = re.captures(str) {
+        Some(String::from(cap.get(1).unwrap().as_str()))
+    } else {
+        None
+    }
+}

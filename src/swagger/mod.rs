@@ -1,9 +1,10 @@
 pub mod Interface {
 
-    use crate::utils::{gen_comment, gen_default, gen_type, gen_union_type, is_english};
+    use crate::utils::{
+        gen_comment, gen_default, gen_type, gen_union_type, get_ref_last_item, is_english,
+    };
 
     use openapi_schema::v2::{Schema, Swagger};
-    use regex::Regex;
 
     fn get_definitions<'a>(swagger: &'a Swagger) -> Option<Vec<&'a Schema>> {
         if let Some(definitions) = &swagger.definitions {
@@ -39,7 +40,9 @@ export interface {} {{
                 // 如果有描述信息，就生成注释，添加到后面
                 if let Some(description) = &schema.description {
                     i_string.push_str(&gen_comment(&description))
-                };
+                } else {
+                    i_string.push_str("\n");
+                }
                 // 如果json中有enum就生成联合union类型
                 if let Some(_enum) = &schema.r#enum {
                     let union_type = &gen_union_type(&_enum);
@@ -47,28 +50,32 @@ export interface {} {{
                 } else {
                     // 如果没有，就看type是不是array
                     if &schema.r#type == &Some(String::from("array")) {
-                        let new_type = {
-                            if let Some(item) = &schema.items {
-                                if let Some(item_type) = &item.r#type {
-                                    item_type
-                                } else if let Some(_ref) = &schema.reference {
-                                    let re = Regex::new(r".*/(.*)").unwrap();
-                                    if let Some(cap) = re.captures(&_ref) {
-                                        let cap = cap.get(1).unwrap().as_str();
-                                        if is_english(cap) {
-                                            cap
-                                        } else {
-                                            "any"
+                        let new_type = match &schema.items {
+                            Some(items) => {
+                                if Option::is_some(&items.original_ref) {
+                                    items.original_ref.as_ref().unwrap().as_str()
+                                } else if Option::is_some(&items.r#type) {
+                                    items.r#type.as_ref().unwrap().as_str()
+                                } else if Option::is_some(&items.reference) {
+                                    let last_item =
+                                        get_ref_last_item(&items.reference.as_ref().unwrap());
+                                    match last_item {
+                                        Some(item) => {
+                                            // println!("{}", item);
+                                            if is_english(&item) {
+                                                return item;
+                                            } else {
+                                                return "any".to_string();
+                                            }
                                         }
-                                    } else {
-                                        "any"
+                                        None => return "any".to_string(),
                                     }
+                                    // reference
                                 } else {
                                     "any"
                                 }
-                            } else {
-                                "any"
                             }
+                            None => "any",
                         };
                         i_string.push_str(&gen_type(&name, &new_type, required, true))
                     } else {

@@ -31473,7 +31473,7 @@
 			},
 			"title": "HttpResult"
 		},
-		"HttpResult«AuthorizedButtonKeyDic»": {
+		"HttpResult<AuthorizedButtonKeyDic>": {
 			"type": "object",
 			"required": ["code", "msg"],
 			"properties": {
