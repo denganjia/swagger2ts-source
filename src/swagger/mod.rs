@@ -1,8 +1,11 @@
 #[allow(non_snake_case)]
 pub mod Interface {
 
-    use crate::utils::{
-        gen_comment, gen_default, gen_type, gen_union_type, get_ref_last_item, is_english,
+    use crate::{
+        utils::{
+            gen_comment, gen_default, gen_type, gen_union_type, get_ref_last_item, is_english,
+        },
+        Config,
     };
 
     use openapi_schema::v2::{Schema, Swagger};
@@ -95,7 +98,8 @@ export interface {} {{
         i_string
     }
 
-    pub fn generate<'a>(swagger: &'a Swagger) -> String {
+    pub fn generate<'a>(swagger: &'a Swagger, config: Config) -> String {
+        println!("{:?}", config);
         let definitions = self::get_definitions(swagger);
         let mut res = String::new();
         if let Some(definitions) = definitions {

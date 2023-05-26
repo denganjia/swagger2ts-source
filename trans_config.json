@@ -1,0 +1,12 @@
+{
+  "filename": "types.d.ts",
+  "url": "http://192.168.0.56:3000/api/admin-json",
+  "outdir": "api",
+  "request": true,
+  "request_config": {
+    "function_temaplte": "export async function {name} (params:{arameter})  {\n return await http.{method}<{response}>({url},params);\n}",
+    "ignore_path": "/web/1.0",
+    "prefix_string": "import http from '@/api/index';",
+    "split_type": "file"
+  }
+}

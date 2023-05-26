@@ -2,7 +2,10 @@
 pub mod Interface {
     use std::collections::BTreeMap;
 
-    use crate::utils::{gen_comment, gen_type, get_ref_last_item, is_english};
+    use crate::{
+        utils::{gen_comment, gen_type, get_ref_last_item, is_english},
+        Config,
+    };
     use openapi_schema::v3::{OpenApi, RefOrObject, Schema};
 
     fn get_schemas(openapi: &OpenApi) -> BTreeMap<String, RefOrObject<Schema>> {
@@ -196,7 +199,8 @@ export interface {} {{
         i_string
     }
 
-    pub fn generate(openapi: OpenApi) -> String {
+    pub fn generate(openapi: OpenApi, config: Config) -> String {
+        println!("{:?}", config);
         let schemas = self::get_schemas(&openapi);
         let mut interface_string = String::new();
         for schema in schemas {
