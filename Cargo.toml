@@ -1,8 +1,8 @@
 [package]
 name = "swagger2ts"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
-authors = ["denganjia denganjia111@gmail.com"]
+authors = ["denganjia"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]

@@ -1,8 +1,9 @@
+#[allow(non_snake_case)]
 pub mod Interface {
     use std::collections::BTreeMap;
 
-    use crate::utils::{gen_comment, gen_default, gen_type, get_ref_last_item, is_english};
-    use openapi_schema::v3::{OpenApi, RefOrObject, Reference, Schema};
+    use crate::utils::{gen_comment, gen_type, get_ref_last_item, is_english};
+    use openapi_schema::v3::{OpenApi, RefOrObject, Schema};
 
     fn get_schemas(openapi: &OpenApi) -> BTreeMap<String, RefOrObject<Schema>> {
         let mut result: BTreeMap<String, RefOrObject<Schema>> = BTreeMap::new();
@@ -46,24 +47,23 @@ export interface {} {{
         "#,
             description, name,
         );
-        //         // 如果是引用的其他类型，就继承 extends
-        //         if Option::is_some(&ref_obj) {
-        //             i_string.clear();
-        //             let last_item = get_ref_last_item(&ref_obj.unwrap().reference);
-        //             let str = format!(
-        //                 r#"
-        // /**
-        // * {}
-        // */
-        // export interface {} extends {} {{}}
-        //             "#,
-        //                 description,
-        //                 name,
-        //                 last_item.unwrap_or("Object".to_string())
-        //             );
-        //             i_string.push_str(str.as_str())
-        //         } else
-        if Option::is_some(&schema) {
+        // 如果是引用的其他类型，就继承 extends
+        if Option::is_some(&ref_obj) {
+            i_string.clear();
+            let last_item = get_ref_last_item(&ref_obj.unwrap().reference);
+            let str = format!(
+                r#"
+        /**
+        * {}
+        */
+        export interface {} extends {} {{}}
+                    "#,
+                description,
+                name,
+                last_item.unwrap_or("Object".to_string())
+            );
+            i_string.push_str(str.as_str())
+        } else if Option::is_some(&schema) {
             let schema = &schema.unwrap();
             if let Some(properties) = &schema.properties {
                 for (property, ref_or_schema) in properties {
