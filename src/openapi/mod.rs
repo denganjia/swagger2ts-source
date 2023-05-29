@@ -1,12 +1,14 @@
 #[allow(non_snake_case)]
 pub mod Interface {
-    use std::collections::BTreeMap;
-
     use crate::{
+        save,
         utils::{gen_comment, gen_type, get_ref_last_item, is_english},
         Config,
     };
     use openapi_schema::v3::{OpenApi, RefOrObject, Schema};
+    use std::collections::BTreeMap;
+    use std::env;
+    use std::path::PathBuf;
 
     fn get_schemas(openapi: &OpenApi) -> BTreeMap<String, RefOrObject<Schema>> {
         let mut result: BTreeMap<String, RefOrObject<Schema>> = BTreeMap::new();
@@ -164,7 +166,6 @@ export interface {} {{
                                                 let last_item = get_ref_last_item(&_ref.reference);
                                                 match last_item {
                                                     Some(item) => {
-                                                        // println!("{}", item);
                                                         if is_english(&item) {
                                                             item
                                                         } else {
@@ -199,14 +200,17 @@ export interface {} {{
         i_string
     }
 
-    pub fn generate(openapi: OpenApi, config: Config) -> String {
-        println!("{:?}", config);
+    pub fn generate(openapi: OpenApi, config: Config) {
         let schemas = self::get_schemas(&openapi);
         let mut interface_string = String::new();
         for schema in schemas {
             let i_string = self::gen_interface(schema);
             interface_string.push_str(i_string.as_str());
         }
-        interface_string
+        let mut filepath = PathBuf::new();
+        filepath.push(env::current_dir().expect("获取当前目录失败"));
+        filepath.push(config.outdir.unwrap());
+        filepath.push(config.filename.unwrap());
+        save(interface_string, filepath).expect("文件保存失败");
     }
 }

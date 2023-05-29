@@ -1,12 +1,14 @@
 #[allow(non_snake_case)]
 pub mod Interface {
-
     use crate::{
+        save,
         utils::{
             gen_comment, gen_default, gen_type, gen_union_type, get_ref_last_item, is_english,
         },
         Config,
     };
+    use std::env;
+    use std::path::PathBuf;
 
     use openapi_schema::v2::{Schema, Swagger};
 
@@ -65,7 +67,6 @@ export interface {} {{
                                         get_ref_last_item(&items.reference.as_ref().unwrap());
                                     match last_item {
                                         Some(item) => {
-                                            // println!("{}", item);
                                             if is_english(&item) {
                                                 return item;
                                             } else {
@@ -98,17 +99,20 @@ export interface {} {{
         i_string
     }
 
-    pub fn generate<'a>(swagger: &'a Swagger, config: Config) -> String {
-        println!("{:?}", config);
-        let definitions = self::get_definitions(swagger);
+    pub fn generate(swagger: Swagger, config: Config) {
+        let definitions = self::get_definitions(&swagger);
         let mut res = String::new();
         if let Some(definitions) = definitions {
             for definition in definitions {
                 res.push_str(&self::gen_interface(&definition));
             }
-            return res;
         } else {
-            return String::from("value");
+            res.push_str("");
         }
+        let mut filepath = PathBuf::new();
+        filepath.push(env::current_dir().expect("获取当前目录失败"));
+        filepath.push(config.outdir.unwrap());
+        filepath.push(config.filename.unwrap());
+        save(res, filepath).expect("文件保存失败");
     }
 }

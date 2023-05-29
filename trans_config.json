@@ -1,6 +1,6 @@
 {
   "filename": "types.d.ts",
-  "url": "http://192.168.0.56:3000/api/admin-json",
+  "url": "http://192.168.0.62:22102/clubmanager/v2/api-docs?group=2.web",
   "outdir": "api",
   "request": true,
   "request_config": {

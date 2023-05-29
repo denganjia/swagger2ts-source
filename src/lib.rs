@@ -18,7 +18,6 @@ pub fn save(str: String, filename: PathBuf) -> std::io::Result<()> {
 
 /// 根据url获取api的json
 pub async fn get_json(url: &str) -> openapi_schema::Doc {
-    println!("{url}");
     let url_response = reqwest::get(url).await;
     let url_response = match url_response {
         Ok(response) => response,
