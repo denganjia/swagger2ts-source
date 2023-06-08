@@ -561,9 +561,9 @@ checksum = "b7e5500299e16ebb147ae15a00a942af264cf3688f47923b8fc2cd5858f23ad3"
 
 [[package]]
 name = "openapi-schema"
-version = "0.1.5"
+version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b8df41e2869fa63667f36f9bfbc17cbf518abd20de908d3d5aa189d515da4213"
+checksum = "c2ad3c550e26491a2de6a15e8a6dacbd06c5392cf3f8add6a6248b40d900b0e9"
 dependencies = [
  "serde",
  "serde_json",
@@ -913,7 +913,7 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "swagger2ts"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "clap",
  "openapi-schema",

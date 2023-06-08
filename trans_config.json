@@ -1,12 +1,12 @@
 {
   "filename": "types.d.ts",
-  "url": "http://192.168.0.62:22102/clubmanager/v2/api-docs?group=2.web",
+  "url": "http://192.168.0.63:22102/clubmanager/v2/api-docs?group=2.web",
   "outdir": "api",
   "request": true,
   "request_config": {
-    "function_temaplte": "export async function {name} (params:{arameter})  {\n return await http.{method}<{response}>({url},params);\n}",
-    "ignore_path": "/web/1.0",
-    "prefix_string": "import http from '@/api/index';",
-    "split_type": "file"
+    "function_template": "//{description}\nexport function {name} (params?:{parameter})  {\n return http.{method}<{response}>({url},params);\n}\n",
+    "ignore_path": "/web/v1.0",
+    "prefix": "import http from '@/api/index';\n ",
+    "split": false
   }
 }

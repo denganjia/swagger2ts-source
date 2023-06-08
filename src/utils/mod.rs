@@ -5,8 +5,8 @@ pub fn gen_comment(comment: &str) -> String {
     format!(
         r#"
 /**
-* {}
-*/
+ * {}
+*/ 
 "#,
         comment
     )
@@ -36,13 +36,15 @@ pub fn gen_default<T: Clone>(target: &Option<T>, default: T) -> T {
 }
 
 /// 生成类型定义
-/// #Example
+///
+/// # Example
 /// ```
 /// let property = "name";
 /// let r#type = "string";
 /// let required = false;
-/// let gen_type_res = swagger2ts::gen_type(property,r#type,required);
-/// assert_eq!(gen_type_res,"name?: string;");
+/// let array = true
+/// let gen_type_res = swagger2ts::gen_type(property,r#type,required,array);
+/// assert_eq!(gen_type_res,"name?: string[];");
 /// ```
 pub fn gen_type(property: &str, r#type: &str, required: bool, array: bool) -> String {
     let required: &str = if required { r#""# } else { "?" };

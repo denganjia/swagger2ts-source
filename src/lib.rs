@@ -58,14 +58,8 @@ pub struct Config {
 pub struct RequestConfig {
     pub function_template: Option<String>,
     pub ignore_path: Option<String>,
-    pub prefix_string: Option<String>,
-    pub split_type: Option<SplitType>,
-}
-#[derive(Deserialize, Serialize, Clone, Debug)]
-#[serde(rename_all = "lowercase")]
-pub enum SplitType {
-    File,
-    Dir,
+    pub prefix: Option<String>,
+    pub split: Option<bool>,
 }
 
 impl Config {
