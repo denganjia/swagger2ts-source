@@ -11,32 +11,42 @@ pub mod Interface {
         Operation, ParamInEnum, ParameterOrRef, ParameterType, PathItem, ResponseOrRef, Schema,
         Swagger,
     };
-    use std::collections::hash_map::DefaultHasher;
     use std::hash::{Hash, Hasher};
+    use std::{
+        borrow::Borrow,
+        collections::hash_map::{DefaultHasher, RandomState},
+    };
     use std::{
         collections::{BTreeMap, HashMap},
         env,
     };
     use std::{path::PathBuf, vec};
-    struct Cache<'a> {
-        cache: HashMap<&'a String, String>,
+    struct Cache<K, V, S = RandomState> {
+        cache: HashMap<K, V, S>,
     }
 
-    impl Cache<'_> {
+    impl<K, V> Cache<K, V>
+    where
+        K: Eq + Hash,
+    {
         fn new() -> Self {
             Cache {
                 cache: HashMap::new(),
             }
         }
 
-        fn get(&self, k: &String) -> std::option::Option<&std::string::String> {
+        fn get<Q: ?Sized>(&self, k: &Q) -> Option<&V>
+        where
+            K: Borrow<Q>,
+            Q: Hash + Eq,
+        {
             self.cache.get(k)
         }
     }
 
     fn get_definitions<'a>(
         swagger: &'a Swagger,
-        cacher: &mut Cache<'a>,
+        cacher: &mut Cache<String, String>,
     ) -> BTreeMap<String, Schema> {
         if let Some(definitions) = &swagger.definitions {
             for key in definitions.keys() {
@@ -48,9 +58,11 @@ pub mod Interface {
                     let lower_five_bits = (hash_value % 1000000) as u32;
                     cacher
                         .cache
-                        .insert(&key, format!("Interface_{}", lower_five_bits));
+                        .insert(key.to_string(), format!("Interface_{}", lower_five_bits));
                 } else {
-                    cacher.cache.insert(&key, key.clone().to_string());
+                    cacher
+                        .cache
+                        .insert(key.to_string(), key.clone().to_string());
                 }
             }
             definitions.clone()
@@ -59,7 +71,7 @@ pub mod Interface {
         }
     }
 
-    fn gen_interface(model: &Schema, cacher: &Cache) -> String {
+    fn gen_interface(model: &Schema, cacher: &Cache<String, String>) -> String {
         let title = match &model.title {
             Some(title_) => {
                 if is_english(&title_) {
@@ -95,7 +107,7 @@ export interface {} {{
     fn gen_api_function(
         paths: BTreeMap<String, PathItem>,
         config: &Config,
-        cacher: &Cache,
+        cacher: &Cache<String, String>,
     ) -> Vec<String> {
         // let type_config = config.filename;
         let RequestConfig {
@@ -148,7 +160,7 @@ export interface {} {{
         operation: Operation,
         method: &str,
         url: &str,
-        cacher: &Cache,
+        cacher: &Cache<String, String>,
     ) -> String {
         let Operation {
             tags: _,
@@ -325,7 +337,7 @@ export interface {} {{
     fn gen_ts_propertites(
         properties: &BTreeMap<String, Schema>,
         requireds: &Vec<String>,
-        cacher: &Cache,
+        cacher: &Cache<String, String>,
     ) -> String {
         let mut propertites_string = String::new();
         for property in properties {
@@ -352,7 +364,7 @@ export interface {} {{
                             p_type.push_str(
                                 &cacher
                                     .cache
-                                    .get(&original_ref)
+                                    .get(&original_ref.to_string())
                                     .unwrap_or(&"any".to_string())
                                     .as_str(),
                             );
@@ -380,7 +392,7 @@ export interface {} {{
                 if is_english(&originalRef) {
                     propertites_string.push_str(&gen_type(&name, originalRef, required, false))
                 } else {
-                    p_type.push_str(&cacher.get(&originalRef).unwrap().as_str());
+                    p_type.push_str(&cacher.get(originalRef).unwrap().as_str());
                     propertites_string.push_str(&gen_type(&name, &p_type, required, false))
                 }
             } else {
@@ -397,7 +409,7 @@ export interface {} {{
     }
 
     pub fn generate(swagger: Swagger, config: Config) {
-        let mut cacher = Cache::new();
+        let mut cacher: Cache<String, String> = Cache::new();
         // 生成interface
         let mut res = String::new();
         let definitions = self::get_definitions(&swagger, &mut cacher);
